@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.env
+.venv/
+venv/
+
+# Data files — upload separately to FAUbox / Google Drive
+data/*/*
+!data/*/.gitkeep
+
+# CSV exports
+export/csv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
