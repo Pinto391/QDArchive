@@ -17,6 +17,7 @@ Usage
   python main.py --classify --db working.db             # classify a specific DB
   python main.py --report                                # print classification stats
   python main.py --report --db working.db --report-out report.txt
+  python main.py --pdf-report --db working.db --pdf-out 23123639_SQ26_Part2_Report.pdf
 """
 
 import argparse
@@ -75,6 +76,12 @@ def run_report(db_path, out=None):
         print(f"\n[Report written to {out}]")
 
 
+def run_pdf_report(db_path, out):
+    from classification.generate_pdf_report import build_report
+    _banner("PART 2 — SUBMISSION-READY PDF REPORT")
+    build_report(db_path, out)
+
+
 def print_stats():
     s = get_stats()
     print("\n── Database Stats ─────────────────────────────────────")
@@ -100,6 +107,10 @@ def main():
     parser.add_argument("--db", default=None, help="DB to use for --classify / --report / --export "
                                                      "(default: 23123639-seeding.db)")
     parser.add_argument("--report-out", default=None, help="Write report to this file")
+    parser.add_argument("--pdf-report", action="store_true",
+                         help="Generate a submission-ready PDF report (Part 2)")
+    parser.add_argument("--pdf-out", default="23123639_SQ26_Part2_Report.pdf",
+                         help="Output path for --pdf-report")
 
     args = parser.parse_args()
 
@@ -116,6 +127,11 @@ def main():
     if args.report:
         db_path = args.db or str(get_db_path())
         run_report(db_path, args.report_out)
+        return
+
+    if args.pdf_report:
+        db_path = args.db or str(get_db_path())
+        run_pdf_report(db_path, args.pdf_out)
         return
 
     # Always init DB first (safe to call multiple times)

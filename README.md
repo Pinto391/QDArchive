@@ -110,9 +110,17 @@ python main.py --classify --db working.db
 python main.py --report --db working.db
 python main.py --report --db working.db --report-out part2_report.txt
 
+# Generate the submission-ready PDF report (title page, charts, tables)
+python main.py --pdf-report --db working.db --pdf-out 23123639_SQ26_Part2_Report.pdf
+
 # Export the classified DB (including CLASSIFICATIONS / TAGS / FILE_CLASSIFICATIONS)
 python main.py --export --db working.db
 ```
+
+`classification/generate_pdf_report.py` produces `23123639_SQ26_Part2_Report.pdf` — a formatted
+submission document (title page with student/course details, methodology, results with charts and
+tables, technical challenges, and conclusion) built with `reportlab` and `matplotlib` from the live
+contents of the classified database, so its numbers always match the current run.
 
 ---
 
