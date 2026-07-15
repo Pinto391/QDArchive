@@ -1,0 +1,122 @@
+================================================================
+  SQ26 PART 2 -- CLASSIFICATION STATISTICS REPORT
+================================================================
+
+-- Overall Volume --
+  Repositories covered:          2
+  Total projects found:          230
+  Total files recorded:          20322
+  Files successfully downloaded: 945 (4.7%)
+
+-- Project Classification Coverage --
+  Projects classified:           228 (99.1%)
+  Projects unclassified:         2 (0.9%)
+
+-- Project Distribution by ISIC Rev. 5 Section --
+  [ R] Human health and social work activities                   73 ( 31.7%)
+  [ Q] Education                                                 65 ( 28.3%)
+  [ K] Telecommunications, computer programming, consultancy, computing infrastructure, and other information service activities   48 ( 20.9%)
+  [ N] Professional, scientific and technical activities         13 (  5.7%)
+  [ P] Public administration and defence; compulsory social security    7 (  3.0%)
+  [ S] Arts, sports and recreation                                7 (  3.0%)
+  [ A] Agriculture, forestry and fishing                          3 (  1.3%)
+  [ F] Construction                                               3 (  1.3%)
+  [ O] Administrative and support service activities              3 (  1.3%)
+  [UNCLASSIFIED] Unclassified                                               2 (  0.9%)
+  [ E] Water supply; sewerage, waste management and remediation activities    1 (  0.4%)
+  [ H] Transportation and storage                                 1 (  0.4%)
+  [ J] Publishing, broadcasting, and content production and distribution activities    1 (  0.4%)
+  [ L] Financial and insurance activities                         1 (  0.4%)
+  [ T] Other service activities                                   1 (  0.4%)
+  [ V] Activities of extraterritorial organizations and bodies    1 (  0.4%)
+
+-- Project Distribution by ISIC Rev. 5 Division --
+  [R/86] Human health activities                                        73 ( 31.7%)  avg_confidence=0.29
+  [Q/85] Education                                                      65 ( 28.3%)  avg_confidence=0.23
+  [K/63] Computing infrastructure, data processing, hosting, and other information service activities   48 ( 20.9%)  avg_confidence=0.22
+  [N/72] Scientific research and development                             7 (  3.0%)  avg_confidence=0.09
+  [P/84] Public administration and defence; compulsory social security    7 (  3.0%)  avg_confidence=0.13
+  [S/91] Library, archives, museum and other cultural activities         6 (  2.6%)  avg_confidence=0.31
+  [N/74] Other professional, scientific and technical activities         5 (  2.2%)  avg_confidence=0.30
+  [F/41] Construction of residential and non-residential buildings       3 (  1.3%)  avg_confidence=0.50
+  [O/78] Employment activities                                           3 (  1.3%)  avg_confidence=0.14
+  [UNCLASSIFIED/00] Unclassified                                                    2 (  0.9%)  avg_confidence=0.00
+  [A/01] Crop and animal production, hunting and related service activities    2 (  0.9%)  avg_confidence=0.33
+  [A/02] Forestry and logging                                            1 (  0.4%)  avg_confidence=0.50
+  [E/36] Water collection, treatment and supply                          1 (  0.4%)  avg_confidence=0.67
+  [H/49] Land transport and transport via pipelines                      1 (  0.4%)  avg_confidence=0.25
+  [J/59] Motion picture, video and television programme production, sound recording and music publishing activities    1 (  0.4%)  avg_confidence=0.25
+  [L/65] Insurance, reinsurance and pension funding, except compulsory social security    1 (  0.4%)  avg_confidence=0.50
+  [N/75] Veterinary activities                                           1 (  0.4%)  avg_confidence=1.00
+  [S/90] Arts creation and performing arts activities                    1 (  0.4%)  avg_confidence=0.17
+  [T/94] Activities of membership organizations                          1 (  0.4%)  avg_confidence=0.29
+  [V/99] Activities of extraterritorial organizations and bodies         1 (  0.4%)  avg_confidence=0.67
+
+-- File-Level Classification Coverage --
+  Files classified (each downloaded file has its own class): 945
+  Classified directly from file content:  885 (93.7%)
+  Inherited from parent project (no extractable text, e.g. media/binary files): 60 (6.3%)
+
+-- File Distribution by ISIC Rev. 5 Division --
+  [Q/85] Education                                                     250 ( 26.5%)
+  [R/86] Human health activities                                       226 ( 23.9%)
+  [K/63] Computing infrastructure, data processing, hosting, and other information service activities  175 ( 18.5%)
+  [UNCLASSIFIED/00] Unclassified                                                  101 ( 10.7%)
+  [A/01] Crop and animal production, hunting and related service activities   39 (  4.1%)
+  [P/84] Public administration and defence; compulsory social security   30 (  3.2%)
+  [N/74] Other professional, scientific and technical activities        27 (  2.9%)
+  [N/72] Scientific research and development                            17 (  1.8%)
+  [S/91] Library, archives, museum and other cultural activities        15 (  1.6%)
+  [H/49] Land transport and transport via pipelines                      8 (  0.8%)
+  [O/78] Employment activities                                           8 (  0.8%)
+  [S/93] Sports activities and amusement and recreation activities       7 (  0.7%)
+  [J/59] Motion picture, video and television programme production, sound recording and music publishing activities    6 (  0.6%)
+  [F/41] Construction of residential and non-residential buildings       4 (  0.4%)
+  [A/02] Forestry and logging                                            3 (  0.3%)
+  [K/62] Computer programming, consultancy and related activities        3 (  0.3%)
+  [L/65] Insurance, reinsurance and pension funding, except compulsory social security    3 (  0.3%)
+  [N/69] Legal and accounting activities                                 3 (  0.3%)
+  [S/90] Arts creation and performing arts activities                    3 (  0.3%)
+  [A/03] Fishing and aquaculture                                         2 (  0.2%)
+  [J/58] Publishing activities                                           2 (  0.2%)
+  [O/80] Investigation and security activities                           2 (  0.2%)
+  [V/99] Activities of extraterritorial organizations and bodies         2 (  0.2%)
+  [E/36] Water collection, treatment and supply                          1 (  0.1%)
+  [H/52] Warehousing and support activities for transportation           1 (  0.1%)
+  [I/55] Accommodation                                                   1 (  0.1%)
+  [I/56] Food and beverage service activities                            1 (  0.1%)
+  [J/60] Programming, broadcasting, news agency and other content distribution activities    1 (  0.1%)
+  [K/61] Telecommunications                                              1 (  0.1%)
+  [N/71] Architectural and engineering activities; technical testing and analysis    1 (  0.1%)
+  [N/75] Veterinary activities                                           1 (  0.1%)
+  [T/94] Activities of membership organizations                          1 (  0.1%)
+
+-- Top 20 Tags (for searching) --
+  data repository                           129
+  university                                110
+  health                                    100
+  education                                  73
+  medical                                    53
+  data processing                            52
+  patient                                    49
+  school                                     47
+  recruitment                                44
+  clinical                                   44
+  focus group                                38
+  learning                                   36
+  arts                                       36
+  students                                   35
+  treatment                                  33
+  translation                                28
+  healthcare                                 28
+  archives                                   27
+  disease                                    26
+  library                                    25
+
+-- License Distribution --
+  UNKNOWN               230
+
+-- Download Method Distribution --
+  API-CALL         230
+
+================================================================
