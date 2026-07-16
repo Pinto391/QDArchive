@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS CLASSIFICATIONS (
     secondary_section_name   TEXT,
     secondary_division_name  TEXT,
     secondary_confidence     REAL,
+    project_type             TEXT,               -- 'QDA_PROJECT' | 'QD_PROJECT' | 'OTHER_PROJECT' | 'NOT_A_PROJECT'
     method                   TEXT    NOT NULL,   -- 'RULE_BASED_KEYWORDS'
     classified_date          TEXT    NOT NULL,
     FOREIGN KEY (project_id) REFERENCES PROJECTS(id)

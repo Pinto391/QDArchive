@@ -48,6 +48,32 @@ MIN_SCORE_THRESHOLD = 1  # at least 1 keyword hit required to classify
 
 DATA_ROOT = Path(__file__).parent.parent / "data"
 
+# Project-type categorisation (distinct from ISIC classification): what KIND
+# of research artefact a project is, based on the file types recorded for it.
+#   QDA_PROJECT   — contains a recognised QDA/analysis-software file
+#   QD_PROJECT    — contains qualitative primary data (transcripts, articles,
+#                   notes) but no dedicated QDA file
+#   OTHER_PROJECT — has files, but none recognised as primary qualitative
+#                   data or a QDA file (e.g. only structured/metadata exports)
+#   NOT_A_PROJECT — no files recorded at all (nothing to classify as a
+#                   qualitative-data project)
+QDA_EXTENSIONS = {"qdpx", "qdc", "nvp", "nvpx"}
+PRIMARY_DATA_EXTENSIONS = {
+    "pdf", "txt", "docx", "doc", "rtf", "odt", "htm", "html", "md", "rmd",
+    "tab", "csv", "tsv",
+}
+
+
+def classify_project_type(file_types) -> str:
+    types = set(file_types)
+    if not types:
+        return "NOT_A_PROJECT"
+    if types & QDA_EXTENSIONS:
+        return "QDA_PROJECT"
+    if types & PRIMARY_DATA_EXTENSIONS:
+        return "QD_PROJECT"
+    return "OTHER_PROJECT"
+
 # Budget for project-level file-content sampling: read at most this many
 # files per project, this many characters each, to bound classification time
 # across a corpus with hundreds of PDFs.
@@ -164,9 +190,10 @@ def _apply_schema_part2(conn):
 
 
 def _ensure_secondary_columns(conn):
-    """Migration for databases created before secondary classification was
-    added: CREATE TABLE IF NOT EXISTS only applies to brand-new tables, so
-    existing CLASSIFICATIONS tables need these columns added explicitly."""
+    """Migration for databases created before secondary classification /
+    project-type were added: CREATE TABLE IF NOT EXISTS only applies to
+    brand-new tables, so existing CLASSIFICATIONS tables need these columns
+    added explicitly."""
     existing_cols = {row[1] for row in conn.execute("PRAGMA table_info(CLASSIFICATIONS)")}
     new_cols = {
         "secondary_isic_section": "TEXT",
@@ -174,6 +201,7 @@ def _ensure_secondary_columns(conn):
         "secondary_section_name": "TEXT",
         "secondary_division_name": "TEXT",
         "secondary_confidence": "REAL",
+        "project_type": "TEXT",
     }
     for col, col_type in new_cols.items():
         if col not in existing_cols:
@@ -224,6 +252,8 @@ def run_classifier(db_path: str):
         else:
             sec2 = div2 = sec2_name = div2_name = confidence2 = None
 
+        project_type = classify_project_type(file_types)
+
         conn.execute(
             """
             INSERT INTO CLASSIFICATIONS (
@@ -231,12 +261,12 @@ def run_classifier(db_path: str):
                 section_name, division_name, confidence,
                 secondary_isic_section, secondary_isic_division,
                 secondary_section_name, secondary_division_name, secondary_confidence,
-                method, classified_date
-            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
+                project_type, method, classified_date
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             """,
             (pid, sec, div, sec_name, div_name, confidence,
              sec2, div2, sec2_name, div2_name, confidence2,
-             "RULE_BASED_KEYWORDS", now),
+             project_type, "RULE_BASED_KEYWORDS", now),
         )
 
         for tag in tags:

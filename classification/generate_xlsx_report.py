@@ -33,8 +33,6 @@ HEADER_FILL = PatternFill("solid", fgColor="1F1F33")
 HEADER_FONT = Font(name=FONT_NAME, size=11, bold=True, color="FFFFFF")
 BODY_FONT = Font(name=FONT_NAME, size=11)
 
-PROJECT_TYPE = "QD_PROJECT"
-
 
 def _class_label(section, division, division_name):
     if not section or section == "UNCLASSIFIED":
@@ -51,6 +49,7 @@ def _fetch_rows(db_path: str):
         SELECT p.id AS project_id, p.repository_id, p.title AS project_title,
                c.isic_section, c.isic_division, c.division_name,
                c.secondary_isic_section, c.secondary_isic_division, c.secondary_division_name,
+               c.project_type,
                (SELECT COUNT(*) FROM FILES f WHERE f.project_id = p.id) AS no_project_files
         FROM PROJECTS p
         LEFT JOIN CLASSIFICATIONS c ON c.project_id = p.id
@@ -88,7 +87,7 @@ def build_workbook(db_path: str, out_path: str):
         )
 
         values = [
-            row["repository_id"], PROJECT_TYPE, row["project_title"],
+            row["repository_id"], row["project_type"] or "NOT_A_PROJECT", row["project_title"],
             primary_class, secondary_class, row["no_project_files"],
         ]
         for c, value in enumerate(values, start=1):
