@@ -3,15 +3,20 @@
 -- Part 1 schema.
 
 CREATE TABLE IF NOT EXISTS CLASSIFICATIONS (
-    id              INTEGER PRIMARY KEY AUTOINCREMENT,
-    project_id      INTEGER NOT NULL,
-    isic_section    TEXT    NOT NULL,   -- e.g. 'Q'
-    isic_division   TEXT    NOT NULL,   -- e.g. '85'
-    section_name    TEXT    NOT NULL,
-    division_name   TEXT    NOT NULL,
-    confidence      REAL    NOT NULL,   -- 0.0 - 1.0, based on keyword match score
-    method          TEXT    NOT NULL,   -- 'RULE_BASED_KEYWORDS'
-    classified_date TEXT    NOT NULL,
+    id                       INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id               INTEGER NOT NULL,
+    isic_section             TEXT    NOT NULL,   -- e.g. 'Q'
+    isic_division            TEXT    NOT NULL,   -- e.g. '85'
+    section_name             TEXT    NOT NULL,
+    division_name            TEXT    NOT NULL,
+    confidence               REAL    NOT NULL,   -- 0.0 - 1.0, based on keyword match score
+    secondary_isic_section   TEXT,               -- runner-up class, if any (e.g. cross-disciplinary projects)
+    secondary_isic_division  TEXT,
+    secondary_section_name   TEXT,
+    secondary_division_name  TEXT,
+    secondary_confidence     REAL,
+    method                   TEXT    NOT NULL,   -- 'RULE_BASED_KEYWORDS'
+    classified_date          TEXT    NOT NULL,
     FOREIGN KEY (project_id) REFERENCES PROJECTS(id)
 );
 

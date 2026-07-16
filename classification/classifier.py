@@ -82,14 +82,14 @@ def resolve_file_path(project_row, file_row) -> Path:
     )
 
 
-def classify_text(blob: str):
-    """
-    Score blob against every division's keyword hints.
-    Returns (section, division, section_name, division_name, confidence,
-             matched_tags:set).
-    """
+def _score_divisions(blob: str):
+    """Score a normalised blob against every division's keyword hints.
+    Returns (ranked_results, matched_tags) where ranked_results is a list of
+    (score, section, division, section_name, division_name, confidence)
+    sorted by score descending, for every division that met the minimum
+    threshold — i.e. every plausible class, not just the single winner."""
     blob = _normalise(blob)
-    best = None
+    results = []
     all_matched_tags = set()
 
     for sec_code, sec_name, div_code, div_name, keywords in all_divisions():
@@ -101,14 +101,44 @@ def classify_text(blob: str):
         score = len(matches)
         if score >= MIN_SCORE_THRESHOLD:
             confidence = min(score / max(len(keywords), 1), 1.0)
-            if best is None or score > best[0]:
-                best = (score, sec_code, div_code, sec_name, div_name, confidence)
+            results.append((score, sec_code, div_code, sec_name, div_name, confidence))
 
-    if best is None:
+    results.sort(key=lambda r: -r[0])
+    return results, all_matched_tags
+
+
+def classify_text(blob: str):
+    """
+    Score blob against every division's keyword hints.
+    Returns (section, division, section_name, division_name, confidence,
+             matched_tags:set) for the single best-scoring division.
+    """
+    results, all_matched_tags = _score_divisions(blob)
+
+    if not results:
         return ("UNCLASSIFIED", "00", "Unclassified", "Unclassified", 0.0, all_matched_tags)
 
-    _, sec_code, div_code, sec_name, div_name, confidence = best
+    _, sec_code, div_code, sec_name, div_name, confidence = results[0]
     return (sec_code, div_code, sec_name, div_name, confidence, all_matched_tags)
+
+
+def classify_text_ranked(blob: str):
+    """Like classify_text, but also returns the runner-up (secondary) class —
+    used for the project classification table, which records a primary AND a
+    secondary class per project (a project can plausibly touch two ISIC
+    divisions, e.g. a health-policy education study).
+    Returns (primary, secondary, matched_tags) where each of primary/
+    secondary is (section, division, section_name, division_name, confidence)
+    or None (secondary only, if no runner-up met the threshold)."""
+    results, all_matched_tags = _score_divisions(blob)
+
+    if not results:
+        primary = ("UNCLASSIFIED", "00", "Unclassified", "Unclassified", 0.0)
+        return primary, None, all_matched_tags
+
+    primary = results[0][1:]
+    secondary = results[1][1:] if len(results) > 1 else None
+    return primary, secondary, all_matched_tags
 
 
 def _sample_project_file_text(conn, project_id: int, project_row) -> str:
@@ -129,6 +159,25 @@ def _sample_project_file_text(conn, project_id: int, project_row) -> str:
 def _apply_schema_part2(conn):
     schema_part2 = Path(__file__).parent.parent / "db" / "schema_part2.sql"
     conn.executescript(schema_part2.read_text(encoding="utf-8"))
+    conn.commit()
+    _ensure_secondary_columns(conn)
+
+
+def _ensure_secondary_columns(conn):
+    """Migration for databases created before secondary classification was
+    added: CREATE TABLE IF NOT EXISTS only applies to brand-new tables, so
+    existing CLASSIFICATIONS tables need these columns added explicitly."""
+    existing_cols = {row[1] for row in conn.execute("PRAGMA table_info(CLASSIFICATIONS)")}
+    new_cols = {
+        "secondary_isic_section": "TEXT",
+        "secondary_isic_division": "TEXT",
+        "secondary_section_name": "TEXT",
+        "secondary_division_name": "TEXT",
+        "secondary_confidence": "REAL",
+    }
+    for col, col_type in new_cols.items():
+        if col not in existing_cols:
+            conn.execute(f"ALTER TABLE CLASSIFICATIONS ADD COLUMN {col} {col_type}")
     conn.commit()
 
 
@@ -168,16 +217,26 @@ def run_classifier(db_path: str):
         file_text = _sample_project_file_text(conn, pid, proj)
         blob = metadata_blob + " " + file_text
 
-        sec, div, sec_name, div_name, confidence, tags = classify_text(blob)
+        primary, secondary, tags = classify_text_ranked(blob)
+        sec, div, sec_name, div_name, confidence = primary
+        if secondary:
+            sec2, div2, sec2_name, div2_name, confidence2 = secondary
+        else:
+            sec2 = div2 = sec2_name = div2_name = confidence2 = None
 
         conn.execute(
             """
             INSERT INTO CLASSIFICATIONS (
                 project_id, isic_section, isic_division,
-                section_name, division_name, confidence, method, classified_date
-            ) VALUES (?,?,?,?,?,?,?,?)
+                section_name, division_name, confidence,
+                secondary_isic_section, secondary_isic_division,
+                secondary_section_name, secondary_division_name, secondary_confidence,
+                method, classified_date
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
             """,
-            (pid, sec, div, sec_name, div_name, confidence, "RULE_BASED_KEYWORDS", now),
+            (pid, sec, div, sec_name, div_name, confidence,
+             sec2, div2, sec2_name, div2_name, confidence2,
+             "RULE_BASED_KEYWORDS", now),
         )
 
         for tag in tags:

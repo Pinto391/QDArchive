@@ -7,7 +7,7 @@
 **Supervisor:** Prof. Dr. Dirk Riehle
 **GitHub:** https://github.com/Pinto391/QDArchive
 **Report:** [`23123639_SQ26_Part2_Report.pdf`](23123639_SQ26_Part2_Report.pdf) — full project report (both parts)
-**Classification results (XLSX):** [`23123639_SQ26_Part2_Classification.xlsx`](23123639_SQ26_Part2_Classification.xlsx) — per-project and per-file ISIC Rev. 5 classifications, section/division distributions, and tags
+**Classification table (XLSX):** [`23123639_SQ26_Part2_Classification.xlsx`](23123639_SQ26_Part2_Classification.xlsx) — one row per project with its primary/secondary ISIC Rev. 5 class (Moodle "Project classification table" submission)
 
 ---
 
@@ -166,13 +166,14 @@ submission document (title page with student/course details, methodology, result
 tables, technical challenges, and conclusion) built with `reportlab` and `matplotlib` from the live
 contents of the classified database, so its numbers always match the current run.
 
-`classification/generate_xlsx_report.py` produces `23123639_SQ26_Part2_Classification.xlsx` — a
-workbook with one row per classified **project** and one row per classified **file** (sheets
-`Project Classifications` / `File Classifications`), plus `Section Distribution`, `Division
-Distribution`, and `Tags` sheets computed with live Excel formulas (`COUNTA`/`COUNTIFS`/
-`AVERAGEIFS`/`INDEX`+`MATCH`) against those raw rows — not pre-computed numbers — so the summary
-recalculates automatically if rows are added (e.g. after a real multi-student merge). Verified with
-zero formula errors via LibreOffice headless recalculation.
+`classification/generate_xlsx_report.py` produces `23123639_SQ26_Part2_Classification.xlsx` — the
+**Project classification table** required by the Moodle submission: a single `classification`
+sheet with one row per acquired project — `repository_id`, `project_type`, `project_title`,
+`primary_class`, `secondary_class`, `no_project_files` — where `primary_class`/`secondary_class`
+are formatted as `<ISIC section><division> <division name>` (e.g. `R86 Human health activities`).
+`secondary_class` is the runner-up ISIC division for projects that plausibly touch a second domain
+(computed by `classify_text_ranked()` in `classifier.py`, stored in `CLASSIFICATIONS.secondary_*`),
+left blank if no second division scored above the threshold.
 
 ---
 
@@ -196,6 +197,9 @@ zero formula errors via LibreOffice headless recalculation.
 - `PERSON_ROLE.role`: `AUTHOR` · `UPLOADER` · `OWNER` · `OTHER` · `UNKNOWN`
 - `PROJECTS.download_method`: `API-CALL` (QDR) · `SCRAPING` (ICPSR)
 - `CLASSIFICATIONS.method`: `RULE_BASED_KEYWORDS`
+- `CLASSIFICATIONS.secondary_isic_section` / `secondary_isic_division` / `secondary_confidence`:
+  the runner-up ISIC division for a project (nullable — blank when no second division scored
+  above the classification threshold)
 - `FILE_CLASSIFICATIONS.method`: `RULE_BASED_KEYWORDS` (classified from the file's own extracted
   text) · `NO_TEXT_CONTENT` (media/binary file with no extractable text — inherits its parent
   project's classification instead)
