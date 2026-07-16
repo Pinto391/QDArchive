@@ -7,6 +7,7 @@
 **Supervisor:** Prof. Dr. Dirk Riehle
 **GitHub:** https://github.com/Pinto391/QDArchive
 **Report:** [`23123639_SQ26_Part2_Report.pdf`](23123639_SQ26_Part2_Report.pdf) — full project report (both parts)
+**Classification results (XLSX):** [`23123639_SQ26_Part2_Classification.xlsx`](23123639_SQ26_Part2_Classification.xlsx) — per-project and per-file ISIC Rev. 5 classifications, section/division distributions, and tags
 
 ---
 
@@ -90,7 +91,9 @@ QDArchive/
 │   ├── isic_taxonomy.py      ← Full official ISIC Rev. 5 structure (22 sections, 87 divisions)
 │   ├── text_extract.py       ← Best-effort text extraction from downloaded files
 │   ├── classifier.py         ← Step 2/3: rule-based classifier (project + file level)
-│   └── report.py             ← Step 4: classification statistics report
+│   ├── report.py             ← Step 4: classification statistics report (text)
+│   ├── generate_pdf_report.py  ← Submission-ready PDF project report
+│   └── generate_xlsx_report.py ← Submission-ready XLSX classification workbook
 │
 └── data/                     ← Downloaded files (NOT in git, upload separately)
     ├── qdr/
@@ -151,6 +154,9 @@ python main.py --report --db working.db --report-out part2_report.txt
 # Generate the submission-ready PDF report (title page, charts, tables)
 python main.py --pdf-report --db working.db --pdf-out 23123639_SQ26_Part2_Report.pdf
 
+# Generate the classification-results XLSX workbook (per-project + per-file rows)
+python main.py --xlsx-report --db working.db --xlsx-out 23123639_SQ26_Part2_Classification.xlsx
+
 # Export the classified DB (including CLASSIFICATIONS / TAGS / FILE_CLASSIFICATIONS)
 python main.py --export --db working.db
 ```
@@ -159,6 +165,14 @@ python main.py --export --db working.db
 submission document (title page with student/course details, methodology, results with charts and
 tables, technical challenges, and conclusion) built with `reportlab` and `matplotlib` from the live
 contents of the classified database, so its numbers always match the current run.
+
+`classification/generate_xlsx_report.py` produces `23123639_SQ26_Part2_Classification.xlsx` — a
+workbook with one row per classified **project** and one row per classified **file** (sheets
+`Project Classifications` / `File Classifications`), plus `Section Distribution`, `Division
+Distribution`, and `Tags` sheets computed with live Excel formulas (`COUNTA`/`COUNTIFS`/
+`AVERAGEIFS`/`INDEX`+`MATCH`) against those raw rows — not pre-computed numbers — so the summary
+recalculates automatically if rows are added (e.g. after a real multi-student merge). Verified with
+zero formula errors via LibreOffice headless recalculation.
 
 ---
 
@@ -260,11 +274,12 @@ git push origin main --tags
 - [x] Run classifier on merged data (`python main.py --classify --db working.db`)
 - [x] Generate and review statistics report (`python main.py --report --db working.db`)
 - [x] Generate the submission-ready PDF report (`python main.py --pdf-report --db working.db`)
+- [x] Generate the classification-results XLSX workbook (`python main.py --xlsx-report --db working.db`)
 - [ ] Tag `part-2-release`
 - [ ] Professor's submission form filled in
 
 ```powershell
-git add working.db 23123639_SQ26_Part2_Report.pdf
+git add working.db 23123639_SQ26_Part2_Report.pdf 23123639_SQ26_Part2_Classification.xlsx
 git commit -m "part-2-release: classification complete"
 git tag part-2-release
 git push origin main --tags

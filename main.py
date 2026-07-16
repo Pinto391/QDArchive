@@ -18,6 +18,7 @@ Usage
   python main.py --report                                # print classification stats
   python main.py --report --db working.db --report-out report.txt
   python main.py --pdf-report --db working.db --pdf-out 23123639_SQ26_Part2_Report.pdf
+  python main.py --xlsx-report --db working.db --xlsx-out 23123639_SQ26_Part2_Classification.xlsx
 """
 
 import argparse
@@ -82,6 +83,12 @@ def run_pdf_report(db_path, out):
     build_report(db_path, out)
 
 
+def run_xlsx_report(db_path, out):
+    from classification.generate_xlsx_report import build_workbook
+    _banner("PART 2 — CLASSIFICATION RESULTS (XLSX)")
+    build_workbook(db_path, out)
+
+
 def print_stats():
     s = get_stats()
     print("\n── Database Stats ─────────────────────────────────────")
@@ -111,6 +118,10 @@ def main():
                          help="Generate a submission-ready PDF report (Part 2)")
     parser.add_argument("--pdf-out", default="23123639_SQ26_Part2_Report.pdf",
                          help="Output path for --pdf-report")
+    parser.add_argument("--xlsx-report", action="store_true",
+                         help="Generate a classification-results XLSX workbook (Part 2)")
+    parser.add_argument("--xlsx-out", default="23123639_SQ26_Part2_Classification.xlsx",
+                         help="Output path for --xlsx-report")
 
     args = parser.parse_args()
 
@@ -132,6 +143,11 @@ def main():
     if args.pdf_report:
         db_path = args.db or str(get_db_path())
         run_pdf_report(db_path, args.pdf_out)
+        return
+
+    if args.xlsx_report:
+        db_path = args.db or str(get_db_path())
+        run_xlsx_report(db_path, args.xlsx_out)
         return
 
     # Always init DB first (safe to call multiple times)
